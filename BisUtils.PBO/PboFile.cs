@@ -53,7 +53,8 @@ public class PboFile : BisSynchronizable, IPboFile  {
         
         
         return dataEntry.EntryMagic switch {
-            PboEntryMagic.Compressed => decompress ? reader.ReadCompressedData<BisLZSSCompressionAlgorithms>(
+            PboEntryMagic.Compressed => decompress ? reader.ReadCompressedData(
+                new BisZLibCompressionAlgorithms(),
                 new BisLZSSDecompressionOptions() {
                     AlwaysDecompress = false, ExpectedSize = (int)dataEntry.OriginalSize, UseSignedChecksum = true
                 }).ToArray() : reader.ReadBytes((int)dataEntry.PackedSize),

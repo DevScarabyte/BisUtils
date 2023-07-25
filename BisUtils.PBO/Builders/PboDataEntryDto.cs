@@ -9,6 +9,7 @@ public class PboDataEntryDto : PboDataEntry, IDisposable {
     private bool _disposed;
     private Stream _entryStream { get; set; }
     public ulong? EntryMetaStartOffset;
+    private readonly BisLZSSCompressionAlgorithms _compression = new();
     
     
     public override byte[] EntryData {
@@ -82,7 +83,8 @@ public class PboDataEntryDto : PboDataEntry, IDisposable {
         var ogPos = writer.BaseStream.Position;
         switch (EntryMagic) {
             case PboEntryMagic.Compressed: {
-                writer.WriteCompressedData<BisLZSSCompressionAlgorithms>(EntryData,
+                writer.WriteCompressedData<BisLZSSCompressionOptions>(EntryData,
+                    _compression,
                     new BisLZSSCompressionOptions() { AlwaysCompress = false, WriteSignedChecksum = true });
                 break;
             }
